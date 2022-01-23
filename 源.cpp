@@ -10,7 +10,7 @@
 using namespace std;
 /******************************************************************数组*************************************************************************/
 //1.二分法查找
-//1.1给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target,写一个函数搜索 nums 中的 target，如果目标值存在返回下标,否则返回 - 1。
+//1.1给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target,写一个函数搜索 nums 中的 target，如果目标值存在返回下标,否则返回-1。
 int search(vector<int>& nums, int target)
 {
 	int size = nums.size();
@@ -30,7 +30,7 @@ int search(vector<int>& nums, int target)
 	}
 	return -1;
 }
-//1.2若无此元素，则返回其应插入的位置
+//1.2若无此元素，则返回其应插入的位置。
 int search_2(vector<int>& nums, int target)
 {
 	int size = nums.size();
@@ -114,7 +114,7 @@ int asqrt(int x)
 }
 
 //2.双指针法
-//2.1给你一个数组nums和一个值val,你需要原地移除所有数值等于val的元素,并返回移除后数组的新长度
+//2.1给你一个数组nums和一个值val,你需要原地移除所有数值等于val的元素,并返回移除后数组的新长度。
 int removeElement(vector<int>& nums, int val)
 {
 	//双指针法删除特定元素得到的新数组前n项为删除后的数组，遗留的项是原数组的后几项，
@@ -132,7 +132,7 @@ int removeElement(vector<int>& nums, int val)
 	}
 	return slow;
 }
-//2.2给你一个有序数组nums,请你原地删除重复出现的元素,使每个元素只出现一次,返回删除后数组的新长度
+//2.2给你一个有序数组nums,请你原地删除重复出现的元素,使每个元素只出现一次,返回删除后数组的新长度。
 int removeDuplicates(vector<int>& nums)
 {
 	int slow = 0, fast = 0;
@@ -393,8 +393,94 @@ vector<int> spiralOrder(vector<vector<int>>& matrix)
 }
 
 /******************************************************************链表*************************************************************************/
+ //Definition for singly-linked list.
+  struct ListNode {
+      int val;
+      ListNode *next;
+      ListNode() : val(0), next(nullptr) {}
+      ListNode(int x) : val(x), next(nullptr) {}
+      ListNode(int x, ListNode *next) : val(x), next(next) {}
+  };
 //1.虚拟头节点
-//1.1
+//1.1给你一个链表的头节点head和一个整数val,请你删除链表中所有value为val的节点,并返回新的头节点。
+ListNode* removeElements(ListNode* head, int val)
+{
+	if (head == nullptr) return head;
+	auto vir=new ListNode(0, head);//虚拟头节点，指针指向原头节点
+	head = vir;//把头指针换到新头上
+	ListNode* cur = vir;
+	while (cur->next!=nullptr)
+	{
+		if (cur->next->val == val)
+		{
+			ListNode* temp = cur->next;
+			cur->next = cur->next->next;
+			delete temp;
+		}
+		else cur = cur->next;
+	}
+	head = vir->next;
+	delete vir;
+	return head;
+}
+//1.2给你一个链表,两两交换其中相邻的节点,并返回交换后链表的头节点。
+ListNode* swapPairs(ListNode* head)
+{
+	auto vir = new ListNode(0, head);//虚拟头节点，指针指向原头节点
+	head = vir;//把头指针换到新头上
+	ListNode* cur = vir;
+	//cur->1->2->3->4 : cur->2 2->1 1->3 cur=2
+	while (cur->next != nullptr && cur->next->next != nullptr)
+	{
+		ListNode* temp1 = cur->next;//1
+		ListNode* temp2 = cur->next->next->next;//下一轮反转的起始点
+		cur->next = cur->next->next;//cur->2
+		cur->next->next = temp1;//2->1
+		cur->next->next->next = temp2;//1->3
+		cur = cur->next->next;//cur=3
+	}
+	return vir->next;
+}
+
+//2.双指针法
+//2.1给你单链表的头节点head,请你反转链表,并返回反转后的链表。
+ListNode* reverseList(ListNode* head)
+{
+	//一前一后两个指针形成一条指向，走到尾巴即可调换全部方向
+	ListNode* pre = nullptr;
+	ListNode* cur = head;
+	while (cur != nullptr)
+	{
+		ListNode* temp=cur->next;
+		cur->next = pre;
+		pre = cur;
+		cur = temp;
+	}
+	return pre;
+}
+//2.2删除倒数第n个节点（虚拟头节点+双指针）并返回头节点指针
+ListNode* removeNthFromEnd(ListNode* head, int n)
+{
+	auto vir = new ListNode(0, head);//虚拟头节点，指针指向原头节点
+	head = vir;//把头指针换到新头上
+	ListNode* cur = vir;
+	ListNode* fast = cur;
+	while (n > 0)
+	{
+		fast = fast->next;
+		--n;
+	}
+	while (fast->next != nullptr)//因为是删除节点，未到目的节点就需停下，因此是判断fast->next的值；若仅仅是找到倒数第n节点
+		//则fast为null时cur正好就是倒数第n节点
+	{
+		cur = cur->next;
+		fast = fast->next;
+	}
+	ListNode* d = cur->next;
+	cur->next = cur->next->next;
+	delete d;
+	return vir->next;
+}
 int main()
 {
 	cout << "hello,STL!" << endl;
